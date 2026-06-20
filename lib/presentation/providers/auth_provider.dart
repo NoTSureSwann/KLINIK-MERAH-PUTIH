@@ -76,9 +76,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 2));
     
-    // In Phase 1, we just fake the registration by logging them in as a new user in SharedPreferences
+    // Forward to Supabase via repository
     try {
-      final newUser = await _repository.registerDummyUser(name, email, role);
+      final newUser = await _repository.register(name, email, password, phone, role);
       state = AsyncValue.data(newUser);
       return true;
     } catch (e, st) {

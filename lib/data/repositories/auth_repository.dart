@@ -38,6 +38,26 @@ class AuthRepository implements IAuthRepository {
     } catch (e) {
       // Fallback to dummy data if API is unreachable or fails
       try {
+        // Check dynamically registered dummy users first
+        final localUsersString = _prefs.getString('local_dummy_users') ?? '[]';
+        final List<dynamic> localUsers = jsonDecode(localUsersString);
+        
+        final localMatch = localUsers.cast<Map<String, dynamic>>().where(
+          (user) => user['email'] == email && user['password'] == password,
+        ).toList();
+
+        if (localMatch.isNotEmpty) {
+          final userModel = UserModel(
+            id: localMatch.first['id'],
+            name: localMatch.first['name'],
+            email: localMatch.first['email'],
+            role: localMatch.first['role'],
+          );
+          await _prefs.setString(_userKey, jsonEncode(userModel.toJson()));
+          return userModel;
+        }
+
+        // Then check hardcoded dummy users
         final userJson = dummyUsers.firstWhere(
           (user) => user['email'] == email,
         );
@@ -53,14 +73,15 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<User> registerDummyUser(String name, String email, String role) async {
+  Future<User> register(String name, String email, String password, String phone, String role) async {
     try {
       final supabase.AuthResponse res = await _supabase.auth.signUp(
         email: email,
-        password: 'password123', // Demo password
+        password: password,
         data: {
           'name': name,
           'role': role,
+          'phone': phone,
         }
       );
       
@@ -76,7 +97,7 @@ class AuthRepository implements IAuthRepository {
         return newUser;
       }
     } catch (e) {
-      // Fallback
+      // Print error or handle if needed
     }
 
     // Fallback to dummy local registration
@@ -86,6 +107,19 @@ class AuthRepository implements IAuthRepository {
       email: email,
       role: role,
     );
+    
+    // Save to local dummy list so login can find it later
+    final localUsersString = _prefs.getString('local_dummy_users') ?? '[]';
+    final List<dynamic> localUsers = jsonDecode(localUsersString);
+    localUsers.add({
+      'id': newUser.id,
+      'name': newUser.name,
+      'email': newUser.email,
+      'password': password,
+      'role': newUser.role,
+    });
+    await _prefs.setString('local_dummy_users', jsonEncode(localUsers));
+
     await _prefs.setString(_userKey, jsonEncode(newUser.toJson()));
     return newUser;
   }

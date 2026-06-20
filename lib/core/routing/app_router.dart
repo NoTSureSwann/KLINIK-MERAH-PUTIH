@@ -37,15 +37,32 @@ final shellNavigatorPatientKey = GlobalKey<NavigatorState>(debugLabel: 'patientS
 final shellNavigatorDoctorKey = GlobalKey<NavigatorState>(debugLabel: 'doctorShell');
 final shellNavigatorAdminKey = GlobalKey<NavigatorState>(debugLabel: 'adminShell');
 
+class RouterNotifier extends ChangeNotifier {
+  final Ref _ref;
+
+  RouterNotifier(this._ref) {
+    _ref.listen(authStateProvider, (_, __) => notifyListeners());
+    _ref.listen(splashFinishedProvider, (_, __) => notifyListeners());
+    _ref.listen(onboardingFinishedProvider, (_, __) => notifyListeners());
+  }
+}
+
+final routerNotifierProvider = Provider<RouterNotifier>((ref) {
+  return RouterNotifier(ref);
+});
+
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
-  final isSplashFinished = ref.watch(splashFinishedProvider);
-  final isOnboardingFinished = ref.watch(onboardingFinishedProvider);
+  final notifier = ref.watch(routerNotifierProvider);
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
+    refreshListenable: notifier,
     initialLocation: '/splash',
     redirect: (context, state) {
+      final isSplashFinished = ref.read(splashFinishedProvider);
+      final isOnboardingFinished = ref.read(onboardingFinishedProvider);
+      final authState = ref.read(authStateProvider);
+
       if (!isSplashFinished) {
         return state.matchedLocation == '/splash' ? null : '/splash';
       }
