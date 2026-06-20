@@ -22,11 +22,14 @@ import '../../presentation/screens/admin/management/queue_list_screen.dart';
 import '../../presentation/screens/admin/management/queue_form_screen.dart';
 import '../../presentation/screens/admin/management/medical_record_list_screen.dart';
 import '../../presentation/screens/admin/management/medical_record_form_screen.dart';
+import '../../presentation/screens/admin/management/payment_list_screen.dart';
+import '../../presentation/screens/admin/management/payment_form_screen.dart';
 import '../../domain/entities/patient.dart';
 import '../../domain/entities/doctor.dart';
 import '../../domain/entities/appointment.dart';
 import '../../domain/entities/queue.dart';
 import '../../domain/entities/medical_record.dart';
+import '../../domain/entities/payment.dart';
 import '../../presentation/providers/auth_provider.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -262,6 +265,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'medical_records/form',
                     builder: (context, state) => MedicalRecordFormScreen(record: state.extra as MedicalRecord?),
+                  ),
+                  GoRoute(
+                    path: 'payments',
+                    builder: (context, state) => const PaymentListScreen(),
+                  ),
+                  GoRoute(
+                    path: 'payments/form',
+                    builder: (context, state) => PaymentFormScreen(payment: state.extra as Payment?),
                   ),
                 ],
               ),
