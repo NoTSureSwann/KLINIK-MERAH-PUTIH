@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
 import '../../../../shared/widgets/glass_container.dart';
 import '../../../../shared/widgets/glass_dashboard_card.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -137,7 +135,7 @@ class DoctorHomeTab extends ConsumerWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: activeQueues.length > 5 ? 5 : activeQueues.length, // Show up to 5
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final q = activeQueues[index];
         return GlassContainer(

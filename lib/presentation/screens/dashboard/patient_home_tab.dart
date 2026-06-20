@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
 import '../../../../shared/widgets/glass_container.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
@@ -170,7 +168,7 @@ class PatientHomeTab extends ConsumerWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: state.appointments.length > 3 ? 3 : state.appointments.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final a = state.appointments[index];
         return GlassContainer(
