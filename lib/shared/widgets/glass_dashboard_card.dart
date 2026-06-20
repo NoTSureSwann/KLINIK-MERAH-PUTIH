@@ -40,7 +40,7 @@ class GlassDashboardCard extends StatelessWidget {
                 size: 28,
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 16),
             Text(
               value,
               style: Theme.of(context).textTheme.displaySmall?.copyWith(

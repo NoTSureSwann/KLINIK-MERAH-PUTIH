@@ -166,6 +166,7 @@ class AdminHomeTab extends ConsumerWidget {
                     const Center(child: CircularProgressIndicator())
                   else ...[
                     GlassContainer(
+                      width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       borderRadius: 24,
                       child: Column(
@@ -211,6 +212,7 @@ class AdminHomeTab extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     GlassContainer(
+                      width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       borderRadius: 24,
                       child: Column(
@@ -253,6 +255,7 @@ class AdminHomeTab extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     GlassContainer(
+                      width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       borderRadius: 24,
                       child: Column(

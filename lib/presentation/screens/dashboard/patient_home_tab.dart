@@ -104,6 +104,7 @@ class PatientHomeTab extends ConsumerWidget {
     final activeQueues = state.queues.where((q) => q.status != 'Completed').toList();
     if (activeQueues.isEmpty) {
       return const GlassContainer(
+        width: double.infinity,
         padding: EdgeInsets.all(24),
         child: Center(child: Text('You have no active queues.')),
       );
@@ -157,6 +158,7 @@ class PatientHomeTab extends ConsumerWidget {
   Widget _buildAppointments(BuildContext context, PatientDashboardState state) {
     if (state.appointments.isEmpty) {
       return const GlassContainer(
+        width: double.infinity,
         padding: EdgeInsets.all(24),
         child: Center(child: Text('No recent appointments found.')),
       );

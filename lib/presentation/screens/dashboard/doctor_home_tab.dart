@@ -124,6 +124,7 @@ class DoctorHomeTab extends ConsumerWidget {
     final activeQueues = state.queues.where((q) => q.status != 'Completed').toList();
     if (activeQueues.isEmpty) {
       return const GlassContainer(
+        width: double.infinity,
         padding: EdgeInsets.all(24),
         child: Center(child: Text('No active queues for you at the moment.')),
       );
