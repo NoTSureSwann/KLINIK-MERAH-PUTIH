@@ -20,6 +20,7 @@ class GlassButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: isLoading ? null : onPressed,
       child: GlassContainer(
         height: 56,
