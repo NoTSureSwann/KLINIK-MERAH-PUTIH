@@ -1,318 +1,214 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../shared/widgets/glass_app_bar.dart';
-import '../../../shared/widgets/glass_container.dart';
-import '../../../shared/widgets/glass_dashboard_card.dart';
-import '../../../shared/widgets/glass_button.dart';
-import '../../../shared/widgets/glass_text_field.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../providers/auth_provider.dart';
+import 'package:intl/intl.dart';
+import '../../../../shared/widgets/glass_app_bar.dart';
+import '../../../../shared/widgets/glass_container.dart';
+import '../../../../shared/widgets/glass_dashboard_card.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../providers/doctor_dashboard_provider.dart';
 
 class DoctorHomeTab extends ConsumerWidget {
   const DoctorHomeTab({super.key});
 
-  void _showMedicalRecordForm(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const MedicalRecordFormSheet(),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userAsync = ref.watch(authStateProvider);
+    final user = ref.watch(authStateProvider).value;
+    final dashboardState = ref.watch(doctorDashboardProvider);
 
-    return Column(
-      children: [
-        GlassAppBar(
-          title: 'Doctor Portal',
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Builder(
-              builder: (context) => IconButton(
-                icon: Icon(
-                  Icons.menu_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications_none_rounded),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.logout),
-              color: Theme.of(context).colorScheme.error,
-              onPressed: () async {
-                await ref.read(authStateProvider.notifier).logout();
-                if (context.mounted) context.go('/login');
-              },
-            )
-          ],
-        ),
-        Expanded(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () => ref.read(doctorDashboardProvider.notifier).loadDashboardData(),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: userAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, st) => Center(child: Text('Error: $e')),
-              data: (user) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Greeting Header
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                        child: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Dr. ${user?.name ?? 'Doctor'}',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            Text('General Practitioner', style: Theme.of(context).textTheme.bodyMedium),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Statistics Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GlassContainer(
-                          padding: const EdgeInsets.all(16),
-                          borderRadius: 20,
-                          child: Column(
-                            children: [
-                              Text('24', style: Theme.of(context).textTheme.displaySmall?.copyWith(color: AppColors.primary)),
-                              Text('Total', style: Theme.of(context).textTheme.bodySmall),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: GlassContainer(
-                          padding: const EdgeInsets.all(16),
-                          borderRadius: 20,
-                          child: Column(
-                            children: [
-                              Text('8', style: Theme.of(context).textTheme.displaySmall?.copyWith(color: AppColors.warning)),
-                              Text('Waiting', style: Theme.of(context).textTheme.bodySmall),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: GlassContainer(
-                          padding: const EdgeInsets.all(16),
-                          borderRadius: 20,
-                          child: Column(
-                            children: [
-                              Text('16', style: Theme.of(context).textTheme.displaySmall?.copyWith(color: AppColors.success)),
-                              Text('Done', style: Theme.of(context).textTheme.bodySmall),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Active Queue Card
-                  Text('Current Patient', style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 16),
-                  GlassContainer(
-                    padding: const EdgeInsets.all(24),
-                    borderRadius: 24,
-                    borderColor: AppColors.primary.withValues(alpha: 0.5),
-                    child: Column(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Queue Number', style: Theme.of(context).textTheme.bodyMedium),
-                                Text('A-05', style: Theme.of(context).textTheme.displayMedium?.copyWith(color: AppColors.primary)),
-                                const SizedBox(height: 4),
-                                Text('Budi Santoso', style: Theme.of(context).textTheme.titleLarge),
-                              ],
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
+                        Text(
+                          'Welcome,',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: Colors.grey.shade400,
                               ),
-                              child: const Icon(Icons.volume_up_rounded, color: AppColors.primary, size: 32),
-                            ),
-                          ],
                         ),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: GlassButton(
-                                text: 'Consultation',
-                                icon: Icons.edit_document,
-                                onPressed: () => _showMedicalRecordForm(context),
+                        Text(
+                          'Dr. ${user?.name ?? ''}',
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            GlassContainer(
-                              height: 56,
-                              width: 56,
-                              borderRadius: 16,
-                              child: IconButton(
-                                icon: const Icon(Icons.skip_next_rounded, color: AppColors.primary),
-                                onPressed: () {}, // Next Queue
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: AppColors.secondary.withValues(alpha: 0.2),
+                      child: const Icon(Icons.medical_information, color: AppColors.secondary, size: 28),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
 
-                  // 4 Grid Cards
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 1.1,
+                if (dashboardState.isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else if (dashboardState.error != null)
+                  GlassContainer(
+                    padding: const EdgeInsets.all(16),
+                    child: Center(
+                      child: Text(
+                        dashboardState.error!,
+                        style: const TextStyle(color: AppColors.error),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                else ...[
+                  // Quick Stats
+                  Text('Today\'s Overview', style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 16),
+                  Row(
                     children: [
-                      GlassDashboardCard(
-                        title: 'Patient\nList',
-                        value: '',
-                        icon: Icons.group_rounded,
-                        iconColor: AppColors.primary,
-                        onTap: () {},
+                      Expanded(
+                        child: GlassDashboardCard(
+                          title: 'Appointments',
+                          value: '${dashboardState.todayAppointmentsCount}',
+                          icon: Icons.calendar_today,
+                          iconColor: AppColors.primary,
+                        ),
                       ),
-                      GlassDashboardCard(
-                        title: 'My\nSchedule',
-                        value: '',
-                        icon: Icons.calendar_today_rounded,
-                        iconColor: AppColors.secondary,
-                        onTap: () {},
-                      ),
-                      GlassDashboardCard(
-                        title: 'Medical\nRecords',
-                        value: '',
-                        icon: Icons.folder_shared_rounded,
-                        iconColor: AppColors.warning,
-                        onTap: () {},
-                      ),
-                      GlassDashboardCard(
-                        title: 'Queue\nManagement',
-                        value: '',
-                        icon: Icons.people_alt_rounded,
-                        iconColor: AppColors.success,
-                        onTap: () {},
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: GlassDashboardCard(
+                          title: 'Waiting Queue',
+                          value: '${dashboardState.activeQueueCount}',
+                          icon: Icons.people_alt,
+                          iconColor: AppColors.secondary,
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 32),
+
+                  // Today's Queue
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Active Queue', style: Theme.of(context).textTheme.titleLarge),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text('See All'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _buildQueueList(context, dashboardState),
                 ],
-              ),
+
+                const SizedBox(height: 80),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
-}
 
-class MedicalRecordFormSheet extends StatelessWidget {
-  const MedicalRecordFormSheet({super.key});
+  Widget _buildQueueList(BuildContext context, DoctorDashboardState state) {
+    final activeQueues = state.queues.where((q) => q.status != 'Completed').toList();
+    if (activeQueues.isEmpty) {
+      return const GlassContainer(
+        padding: EdgeInsets.all(24),
+        child: Center(child: Text('No active queues for you at the moment.')),
+      );
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(
-        top: 60,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: GlassContainer(
-        borderRadius: 32,
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Medical Record', style: Theme.of(context).textTheme.displaySmall),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
+    final timeFormat = DateFormat('HH:mm');
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: activeQueues.length > 5 ? 5 : activeQueues.length, // Show up to 5
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final q = activeQueues[index];
+        return GlassContainer(
+          padding: const EdgeInsets.all(16),
+          borderRadius: 16,
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
                 ),
-              ],
-            ),
-            const Divider(height: 32),
-            Expanded(
-              child: SingleChildScrollView(
+                child: Center(
+                  child: Text(
+                    '${q.queueNumber}',
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary, fontSize: 18),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const GlassTextField(
-                      hintText: 'Diagnosis',
-                      prefixIcon: Icons.medical_services_outlined,
+                    Text(
+                      q.patientName ?? 'Unknown Patient',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 16),
-                    const GlassTextField(
-                      hintText: 'Prescription',
-                      prefixIcon: Icons.medication_outlined,
-                    ),
-                    const SizedBox(height: 16),
-                    GlassContainer(
-                      height: 120,
-                      borderRadius: 16,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Additional Notes',
-                          hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Theme.of(context).textTheme.bodySmall?.color,
-                              ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    GlassButton(
-                      text: 'Save Record',
-                      icon: Icons.save_rounded,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                    Text(
+                      'Est. ${timeFormat.format(q.estimatedTime)}',
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
+              _buildStatusChip(q.status),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatusChip(String status) {
+    Color color;
+    switch (status.toLowerCase()) {
+      case 'waiting':
+        color = Colors.orange;
+        break;
+      case 'in consultation':
+        color = Colors.blue;
+        break;
+      case 'completed':
+        color = Colors.green;
+        break;
+      default:
+        color = Colors.grey;
+    }
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Text(
+        status,
+        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
       ),
     );
   }
