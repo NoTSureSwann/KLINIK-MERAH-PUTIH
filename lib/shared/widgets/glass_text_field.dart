@@ -9,6 +9,7 @@ class GlassTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final int? maxLines;
 
   const GlassTextField({
     super.key,
@@ -19,12 +20,13 @@ class GlassTextField extends StatelessWidget {
     this.suffixIcon,
     this.keyboardType,
     this.validator,
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
-      height: 60,
+      height: maxLines != null && maxLines! > 1 ? 120 : 60,
       borderRadius: 16,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Center(
@@ -33,6 +35,7 @@ class GlassTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
+          maxLines: maxLines,
           style: Theme.of(context).textTheme.bodyLarge,
           decoration: InputDecoration(
             border: InputBorder.none,

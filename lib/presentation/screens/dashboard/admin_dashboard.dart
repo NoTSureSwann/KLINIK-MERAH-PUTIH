@@ -24,6 +24,8 @@ class AdminDashboard extends ConsumerWidget {
           DrawerMenuItem(title: 'Patients', icon: Icons.personal_injury, route: '/admin/management/patients'),
           DrawerMenuItem(title: 'Doctors', icon: Icons.medical_information, route: '/admin/management/doctors'),
           DrawerMenuItem(title: 'Appointments', icon: Icons.calendar_month, route: '/admin/management/appointments'),
+          DrawerMenuItem(title: 'Queues', icon: Icons.people_alt, route: '/admin/management/queues'),
+          DrawerMenuItem(title: 'Medical Records', icon: Icons.medical_services, route: '/admin/management/medical_records'),
           DrawerMenuItem(title: 'Payments', icon: Icons.payments, route: '/admin/management/payments'),
           DrawerMenuItem(title: 'Settings', icon: Icons.settings, route: '/admin/profile'),
         ],

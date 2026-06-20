@@ -18,9 +18,15 @@ import '../../presentation/screens/admin/management/doctor_list_screen.dart';
 import '../../presentation/screens/admin/management/doctor_form_screen.dart';
 import '../../presentation/screens/admin/management/appointment_list_screen.dart';
 import '../../presentation/screens/admin/management/appointment_form_screen.dart';
+import '../../presentation/screens/admin/management/queue_list_screen.dart';
+import '../../presentation/screens/admin/management/queue_form_screen.dart';
+import '../../presentation/screens/admin/management/medical_record_list_screen.dart';
+import '../../presentation/screens/admin/management/medical_record_form_screen.dart';
 import '../../domain/entities/patient.dart';
 import '../../domain/entities/doctor.dart';
 import '../../domain/entities/appointment.dart';
+import '../../domain/entities/queue.dart';
+import '../../domain/entities/medical_record.dart';
 import '../../presentation/providers/auth_provider.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -240,6 +246,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'appointments/form',
                     builder: (context, state) => AppointmentFormScreen(appointment: state.extra as Appointment?),
+                  ),
+                  GoRoute(
+                    path: 'queues',
+                    builder: (context, state) => const QueueListScreen(),
+                  ),
+                  GoRoute(
+                    path: 'queues/form',
+                    builder: (context, state) => QueueFormScreen(queue: state.extra as Queue?),
+                  ),
+                  GoRoute(
+                    path: 'medical_records',
+                    builder: (context, state) => const MedicalRecordListScreen(),
+                  ),
+                  GoRoute(
+                    path: 'medical_records/form',
+                    builder: (context, state) => MedicalRecordFormScreen(record: state.extra as MedicalRecord?),
                   ),
                 ],
               ),
