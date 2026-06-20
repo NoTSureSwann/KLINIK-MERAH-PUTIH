@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../../shared/widgets/glass_app_bar.dart';
 import '../../../../shared/widgets/glass_container.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../providers/auth_provider.dart';
-import '../../../providers/patient_dashboard_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/patient_dashboard_provider.dart';
 
 class PatientHomeTab extends ConsumerWidget {
   const PatientHomeTab({super.key});
@@ -144,7 +144,7 @@ class PatientHomeTab extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Est. Time: ${timeFormat.format(q.estimatedTime)}',
+                  'Est. Time: ${timeFormat.format(DateTime.parse(q.estimatedTime))}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                 ),
               ],
@@ -192,7 +192,7 @@ class PatientHomeTab extends ConsumerWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      dateFormat.format(a.appointmentDate),
+                      dateFormat.format(DateTime.parse(a.appointmentDate)),
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],

@@ -82,7 +82,7 @@ class DoctorDashboardNotifier extends Notifier<DoctorDashboardState> {
           id: json['id']?.toString() ?? '',
           patientId: json['patient_id']?.toString() ?? '',
           doctorId: json['doctor_id']?.toString() ?? '',
-          appointmentDate: DateTime.parse(json['appointment_date'] as String),
+          appointmentDate: json['appointment_date'] as String,
           status: json['status'] ?? 'Scheduled',
           patientName: pat?['name'],
           doctorName: doc?['name'],
@@ -93,9 +93,10 @@ class DoctorDashboardNotifier extends Notifier<DoctorDashboardState> {
       final today = DateTime.now();
       int todayCount = 0;
       for (var a in appointments) {
-        if (a.appointmentDate.year == today.year &&
-            a.appointmentDate.month == today.month &&
-            a.appointmentDate.day == today.day) {
+        final aDate = DateTime.parse(a.appointmentDate);
+        if (aDate.year == today.year &&
+            aDate.month == today.month &&
+            aDate.day == today.day) {
           todayCount++;
         }
       }
@@ -122,7 +123,7 @@ class DoctorDashboardNotifier extends Notifier<DoctorDashboardState> {
             id: json['id']?.toString() ?? '',
             appointmentId: json['appointment_id']?.toString() ?? '',
             queueNumber: json['queue_number'] as int,
-            estimatedTime: DateTime.parse(json['estimated_time'] as String),
+            estimatedTime: json['estimated_time'] as String,
             status: st,
             patientName: pat?['name'],
             doctorName: doc?['name'],

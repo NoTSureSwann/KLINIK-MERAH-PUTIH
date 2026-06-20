@@ -6,8 +6,8 @@ import '../../../../shared/widgets/glass_app_bar.dart';
 import '../../../../shared/widgets/glass_container.dart';
 import '../../../../shared/widgets/glass_dashboard_card.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../providers/auth_provider.dart';
-import '../../../providers/doctor_dashboard_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/doctor_dashboard_provider.dart';
 
 class DoctorHomeTab extends ConsumerWidget {
   const DoctorHomeTab({super.key});
@@ -169,7 +169,7 @@ class DoctorHomeTab extends ConsumerWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      'Est. ${timeFormat.format(q.estimatedTime)}',
+                      'Est. ${timeFormat.format(DateTime.parse(q.estimatedTime))}',
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
