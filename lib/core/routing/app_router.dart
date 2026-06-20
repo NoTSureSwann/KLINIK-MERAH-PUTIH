@@ -16,8 +16,11 @@ import '../../presentation/screens/admin/management/patient_list_screen.dart';
 import '../../presentation/screens/admin/management/patient_form_screen.dart';
 import '../../presentation/screens/admin/management/doctor_list_screen.dart';
 import '../../presentation/screens/admin/management/doctor_form_screen.dart';
+import '../../presentation/screens/admin/management/appointment_list_screen.dart';
+import '../../presentation/screens/admin/management/appointment_form_screen.dart';
 import '../../domain/entities/patient.dart';
 import '../../domain/entities/doctor.dart';
+import '../../domain/entities/appointment.dart';
 import '../../presentation/providers/auth_provider.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -229,6 +232,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'doctors/form',
                     builder: (context, state) => DoctorFormScreen(existingDoctor: state.extra as Doctor?),
+                  ),
+                  GoRoute(
+                    path: 'appointments',
+                    builder: (context, state) => const AppointmentListScreen(),
+                  ),
+                  GoRoute(
+                    path: 'appointments/form',
+                    builder: (context, state) => AppointmentFormScreen(appointment: state.extra as Appointment?),
                   ),
                 ],
               ),

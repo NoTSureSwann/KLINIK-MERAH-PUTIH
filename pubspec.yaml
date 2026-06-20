@@ -48,6 +48,7 @@ dependencies:
   equatable: ^2.0.8
   dio: ^5.9.2
   supabase_flutter: ^2.15.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
