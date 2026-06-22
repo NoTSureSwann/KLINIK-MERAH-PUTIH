@@ -4,8 +4,8 @@ import '../../core/theme/app_colors.dart';
 
 class GlassContainer extends StatelessWidget {
   final Widget child;
-  final double? width;
-  final double? height;
+  final double width;
+  final double height;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final double borderRadius;
@@ -16,8 +16,8 @@ class GlassContainer extends StatelessWidget {
   const GlassContainer({
     super.key,
     required this.child,
-    this.width,
-    this.height,
+    this.width = double.infinity,
+    this.height = double.infinity,
     this.padding,
     this.margin,
     this.borderRadius = 20.0,
@@ -29,8 +29,12 @@ class GlassContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultBorderColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.4);
-    final backgroundColor = isDark ? Colors.black.withValues(alpha: opacity) : Colors.white.withValues(alpha: opacity);
+    final defaultBorderColor = isDark
+        ? Colors.white.withValues(alpha: 0.1)
+        : Colors.white.withValues(alpha: 0.4);
+    final backgroundColor = isDark
+        ? Colors.black.withValues(alpha: opacity)
+        : Colors.white.withValues(alpha: opacity);
 
     return Container(
       margin: margin,

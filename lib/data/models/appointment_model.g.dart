@@ -20,10 +20,10 @@ AppointmentModel _$AppointmentModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$AppointmentModelToJson(AppointmentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'status': instance.status,
-      'patientName': instance.patientName,
-      'doctorName': instance.doctorName,
       'patient_id': instance.patientId,
       'doctor_id': instance.doctorId,
       'appointment_date': instance.appointmentDate,
+      'status': instance.status,
+      'patientName': instance.patientName,
+      'doctorName': instance.doctorName,
     };

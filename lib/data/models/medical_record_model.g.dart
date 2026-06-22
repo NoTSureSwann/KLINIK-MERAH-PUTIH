@@ -21,11 +21,11 @@ MedicalRecordModel _$MedicalRecordModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$MedicalRecordModelToJson(MedicalRecordModel instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'appointment_id': instance.appointmentId,
       'diagnosis': instance.diagnosis,
       'prescription': instance.prescription,
       'notes': instance.notes,
       'patientName': instance.patientName,
       'doctorName': instance.doctorName,
       'appointmentDate': instance.appointmentDate,
-      'appointment_id': instance.appointmentId,
     };
