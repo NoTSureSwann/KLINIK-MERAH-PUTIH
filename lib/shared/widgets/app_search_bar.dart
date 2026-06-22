@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class GlassSearchBar extends StatelessWidget {
+class AppSearchBar extends StatelessWidget {
   final String hintText;
   final ValueChanged<String>? onChanged;
 
-  const GlassSearchBar({
+  const AppSearchBar({
     super.key,
     this.hintText = 'Search...',
     this.onChanged,
@@ -12,24 +12,22 @@ class GlassSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SearchBar(
       onChanged: onChanged,
       hintText: hintText,
-      leading: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
+      leading: Icon(Icons.search, color: theme.colorScheme.primary),
       elevation: WidgetStateProperty.all(0),
       shape: WidgetStateProperty.all(
         RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           side: BorderSide(
-            color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+            color: theme.dividerColor.withValues(alpha: 0.6),
           ),
         ),
       ),
-      backgroundColor: WidgetStateProperty.all(
-        Theme.of(context).brightness == Brightness.dark
-            ? Theme.of(context).colorScheme.surfaceContainerHighest
-            : Theme.of(context).colorScheme.surfaceContainerLowest,
-      ),
+      backgroundColor: WidgetStateProperty.all(theme.colorScheme.surface),
       padding: WidgetStateProperty.all(
         const EdgeInsets.symmetric(horizontal: 16),
       ),

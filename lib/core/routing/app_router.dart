@@ -3,12 +3,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../presentation/screens/auth/login_screen.dart';
 import '../../presentation/screens/auth/register_screen.dart';
-import '../../presentation/screens/splash/splash_screen.dart';
-import '../../presentation/screens/onboarding/onboarding_screen.dart';
 import '../../presentation/screens/dashboard/patient_dashboard.dart';
 import '../../presentation/screens/dashboard/doctor_dashboard.dart';
 import '../../presentation/screens/dashboard/admin_dashboard.dart';
-import '../../presentation/screens/dashboard/placeholder_screen.dart';
+
+import '../../presentation/screens/dashboard/patient_appointment_screen.dart';
+import '../../presentation/screens/dashboard/patient/patient_book_appointment_screen.dart';
+import '../../presentation/screens/dashboard/patient_queue_screen.dart';
+import '../../presentation/screens/dashboard/patient_profile_screen.dart';
+import '../../presentation/screens/dashboard/doctor_patient_list_screen.dart';
+import '../../presentation/screens/dashboard/doctor_schedule_screen.dart';
+import '../../presentation/screens/dashboard/doctor_profile_screen.dart';
+import '../../presentation/screens/dashboard/admin_management_menu_screen.dart';
+import '../../presentation/screens/dashboard/admin_reports_screen.dart';
+import '../../presentation/screens/dashboard/admin_profile_screen.dart';
+import '../../presentation/screens/dashboard/admin/medicine/admin_medicine_list_screen.dart';
+import '../../presentation/screens/dashboard/admin/medicine/medicine_form_screen.dart';
+import '../../presentation/screens/dashboard/admin/service/admin_service_list_screen.dart';
+import '../../presentation/screens/dashboard/admin/service/service_form_screen.dart';
+import '../../presentation/screens/dashboard/doctor/medicine/doctor_medicine_screen.dart';
+import '../../presentation/screens/dashboard/doctor/service/doctor_service_screen.dart';
+import '../../presentation/screens/dashboard/doctor/doctor_medical_records_screen.dart';
+import '../../domain/entities/medicine.dart';
+import '../../domain/entities/doctor_service.dart';
 import '../../presentation/screens/dashboard/patient_home_tab.dart';
 import '../../presentation/screens/dashboard/doctor_home_tab.dart';
 import '../../presentation/screens/dashboard/admin_home_tab.dart';
@@ -42,8 +59,6 @@ class RouterNotifier extends ChangeNotifier {
 
   RouterNotifier(this._ref) {
     _ref.listen(authStateProvider, (_, _) => notifyListeners());
-    _ref.listen(splashFinishedProvider, (_, _) => notifyListeners());
-    _ref.listen(onboardingFinishedProvider, (_, _) => notifyListeners());
   }
 }
 
@@ -57,19 +72,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     refreshListenable: notifier,
-    initialLocation: '/splash',
+    initialLocation: '/login',
     redirect: (context, state) {
-      final isSplashFinished = ref.read(splashFinishedProvider);
-      final isOnboardingFinished = ref.read(onboardingFinishedProvider);
       final authState = ref.read(authStateProvider);
-
-      if (!isSplashFinished) {
-        return state.matchedLocation == '/splash' ? null : '/splash';
-      }
-
-      if (!isOnboardingFinished) {
-        return state.matchedLocation == '/onboarding' ? null : '/onboarding';
-      }
 
       final isLoading = authState.isLoading;
       final isAuthenticated = authState.value != null;
@@ -98,26 +103,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(
-        path: '/splash',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: const SplashScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      ),
-      GoRoute(
-        path: '/onboarding',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: const OnboardingScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      ),
       GoRoute(
         path: '/login',
         pageBuilder: (context, state) => CustomTransitionPage(
@@ -163,7 +148,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/patient/appointment',
-                builder: (context, state) => const PlaceholderScreen(title: 'Appointments', icon: Icons.calendar_month),
+                builder: (context, state) => const PatientAppointmentScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'book',
+                    builder: (context, state) => const PatientBookAppointmentScreen(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -171,7 +162,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/patient/queue',
-                builder: (context, state) => const PlaceholderScreen(title: 'Queue Status', icon: Icons.people_alt),
+                builder: (context, state) => const PatientQueueScreen(),
               ),
             ],
           ),
@@ -179,7 +170,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/patient/profile',
-                builder: (context, state) => const PlaceholderScreen(title: 'Profile', icon: Icons.person),
+                builder: (context, state) => const PatientProfileScreen(),
               ),
             ],
           ),
@@ -195,6 +186,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/doctor',
                 builder: (context, state) => const DoctorHomeTab(),
+                routes: [
+                  GoRoute(
+                    path: 'medicines',
+                    builder: (context, state) => const DoctorMedicineScreen(),
+                  ),
+                  GoRoute(
+                    path: 'services',
+                    builder: (context, state) => const DoctorServiceScreen(),
+                  ),
+                  GoRoute(
+                    path: 'medical_records',
+                    builder: (context, state) => const DoctorMedicalRecordsScreen(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -202,7 +207,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/doctor/patients',
-                builder: (context, state) => const PlaceholderScreen(title: 'Patient List', icon: Icons.group),
+                builder: (context, state) => const DoctorPatientListScreen(),
               ),
             ],
           ),
@@ -210,15 +215,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/doctor/schedule',
-                builder: (context, state) => const PlaceholderScreen(title: 'Schedule', icon: Icons.calendar_today),
+                builder: (context, state) => const DoctorScheduleScreen(),
               ),
             ],
           ),
+
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/doctor/profile',
-                builder: (context, state) => const PlaceholderScreen(title: 'Profile', icon: Icons.person),
+                builder: (context, state) => const DoctorProfileScreen(),
               ),
             ],
           ),
@@ -241,7 +247,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/admin/management',
-                builder: (context, state) => const PlaceholderScreen(title: 'Management', icon: Icons.manage_accounts),
+                builder: (context, state) => const AdminManagementMenuScreen(),
                 routes: [
                   GoRoute(
                     path: 'patients',
@@ -291,15 +297,30 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     path: 'payments/form',
                     builder: (context, state) => PaymentFormScreen(payment: state.extra as Payment?),
                   ),
+                  GoRoute(
+                    path: 'medicines',
+                    builder: (context, state) => const AdminMedicineListScreen(),
+                  ),
+                  GoRoute(
+                    path: 'medicines/form',
+                    builder: (context, state) => MedicineFormScreen(existingMedicine: state.extra as Medicine?),
+                  ),
+                  GoRoute(
+                    path: 'services',
+                    builder: (context, state) => const AdminServiceListScreen(),
+                  ),
+                  GoRoute(
+                    path: 'services/form',
+                    builder: (context, state) => ServiceFormScreen(existingService: state.extra as DoctorService?),
+                  ),
                 ],
-              ),
-            ],
+              ),            ],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/admin/reports',
-                builder: (context, state) => const PlaceholderScreen(title: 'Reports', icon: Icons.analytics),
+                builder: (context, state) => const AdminReportsScreen(),
               ),
             ],
           ),
@@ -307,7 +328,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/admin/profile',
-                builder: (context, state) => const PlaceholderScreen(title: 'Profile', icon: Icons.person),
+                builder: (context, state) => const AdminProfileScreen(),
               ),
             ],
           ),

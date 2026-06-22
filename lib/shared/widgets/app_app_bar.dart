@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
+class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
   final Widget? leading;
   final bool showBackButton;
   final double height;
 
-  const GlassAppBar({
+  const AppAppBar({
     super.key,
     required this.title,
     this.actions,
@@ -18,20 +18,29 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hasDrawer = Scaffold.maybeOf(context)?.hasDrawer ?? false;
+
     final effectiveLeading = showBackButton
         ? IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded,
-                color: Theme.of(context).colorScheme.primary),
+                color: theme.colorScheme.primary),
             onPressed: () => Navigator.of(context).pop(),
           )
         : leading ??
             (Navigator.canPop(context)
                 ? IconButton(
                     icon: Icon(Icons.arrow_back_ios_new,
-                        color: Theme.of(context).colorScheme.primary),
+                        color: theme.colorScheme.primary),
                     onPressed: () => Navigator.pop(context),
                   )
-                : null);
+                : (hasDrawer
+                    ? IconButton(
+                        icon: Icon(Icons.menu_rounded,
+                            color: theme.colorScheme.primary),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      )
+                    : null));
 
     return SafeArea(
       bottom: false,
@@ -39,10 +48,10 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
         height: height,
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: theme.appBarTheme.backgroundColor ?? theme.colorScheme.surface,
           border: Border(
             bottom: BorderSide(
-              color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
+              color: theme.dividerColor.withValues(alpha: 0.8),
             ),
           ),
         ),
@@ -56,7 +65,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Text(
                 title,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                 maxLines: 1,

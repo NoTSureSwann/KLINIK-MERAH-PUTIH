@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
-import '../../../../shared/widgets/glass_container.dart';
-import '../../../../shared/widgets/glass_search_bar.dart';
-import '../../../../shared/widgets/glass_confirmation_dialog.dart';
+import '../../../../shared/widgets/app_app_bar.dart';
+import '../../../../shared/widgets/app_container.dart';
+import '../../../../shared/widgets/app_search_bar.dart';
+import '../../../../shared/widgets/app_confirmation_dialog.dart';
 import '../../../../shared/widgets/state_indicators.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../providers/patient_provider.dart';
@@ -29,7 +29,7 @@ class PatientListScreen extends ConsumerWidget {
         ),
         child: Column(
           children: [
-            GlassAppBar(
+            AppAppBar(
               title: 'Patient Management',
               showBackButton: true,
               actions: [
@@ -41,7 +41,7 @@ class PatientListScreen extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: GlassSearchBar(
+              child: AppSearchBar(
                 hintText: 'Search by Name or Medical ID...',
                 onChanged: (val) => ref.read(patientProvider.notifier).setSearchQuery(val),
               ),
@@ -80,7 +80,7 @@ class PatientListScreen extends ConsumerWidget {
           separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final patient = filtered[index];
-            return GlassContainer(
+            return AppContainer(
               padding: const EdgeInsets.all(16),
               borderRadius: 16,
               child: Row(
@@ -111,7 +111,7 @@ class PatientListScreen extends ConsumerWidget {
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (ctx) => GlassConfirmationDialog(
+                        builder: (ctx) => AppConfirmationDialog(
                           title: 'Delete Patient',
                           content: 'Are you sure you want to delete ${patient.name}?',
                           isDestructive: true,

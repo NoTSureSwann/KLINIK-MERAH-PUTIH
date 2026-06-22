@@ -1,5 +1,6 @@
+import '../../core/network/mock_supabase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 class AnalyticsState {
   final bool isLoading;
@@ -52,7 +53,7 @@ class AnalyticsState {
 }
 
 class AnalyticsNotifier extends Notifier<AnalyticsState> {
-  final _supabase = Supabase.instance.client;
+  final dynamic _supabase = mockSupabase;
 
   @override
   AnalyticsState build() {

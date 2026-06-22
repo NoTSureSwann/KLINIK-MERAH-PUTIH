@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
-import '../../../../shared/widgets/glass_container.dart';
-import '../../../../shared/widgets/glass_search_bar.dart';
-import '../../../../shared/widgets/glass_confirmation_dialog.dart';
+import '../../../../shared/widgets/app_app_bar.dart';
+import '../../../../shared/widgets/app_container.dart';
+import '../../../../shared/widgets/app_search_bar.dart';
+import '../../../../shared/widgets/app_confirmation_dialog.dart';
 import '../../../../shared/widgets/state_indicators.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../providers/queue_provider.dart';
@@ -29,7 +29,7 @@ class QueueListScreen extends ConsumerWidget {
         ),
         child: Column(
           children: [
-            GlassAppBar(
+            AppAppBar(
               title: 'Queue Management',
               showBackButton: true,
               actions: [
@@ -41,7 +41,7 @@ class QueueListScreen extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: GlassSearchBar(
+              child: AppSearchBar(
                 hintText: 'Search by Name, Doctor, or Number...',
                 onChanged: (val) => ref.read(queueProvider.notifier).setSearchQuery(val),
               ),
@@ -81,7 +81,7 @@ class QueueListScreen extends ConsumerWidget {
           itemBuilder: (context, index) {
             final queue = filtered[index];
 
-            return GlassContainer(
+            return AppContainer(
               padding: const EdgeInsets.all(16),
               borderRadius: 16,
               child: Row(
@@ -138,7 +138,7 @@ class QueueListScreen extends ConsumerWidget {
                       } else if (value == 'delete') {
                         showDialog(
                           context: context,
-                          builder: (ctx) => GlassConfirmationDialog(
+                          builder: (ctx) => AppConfirmationDialog(
                             title: 'Delete Queue',
                             content: 'Are you sure you want to delete queue number ${queue.queueNumber}?',
                             isDestructive: true,

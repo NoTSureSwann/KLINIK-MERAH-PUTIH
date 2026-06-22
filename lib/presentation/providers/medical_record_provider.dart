@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../domain/entities/medical_record.dart';
+import '../../core/network/network_provider.dart';
+import '../../core/network/api_client.dart';
+import '../../core/network/api_endpoints.dart';
 
 class MedicalRecordState {
   final bool isLoading;
@@ -43,10 +46,11 @@ class MedicalRecordState {
 }
 
 class MedicalRecordNotifier extends Notifier<MedicalRecordState> {
-  final _supabase = Supabase.instance.client;
+  late final ApiClient _apiClient;
 
   @override
   MedicalRecordState build() {
+    _apiClient = ref.watch(apiClientProvider);
     Future.microtask(() => loadRecords());
     return MedicalRecordState(isLoading: true);
   }
@@ -74,43 +78,45 @@ class MedicalRecordNotifier extends Notifier<MedicalRecordState> {
     } catch (_) {}
 
     try {
-      final data = await _supabase
-          .from('medical_records')
-          .select('*, appointments(appointment_date, patients(name), doctors(name))')
-          .order('created_at', ascending: false);
-
-      final records = data.map((json) {
-        final appt = json['appointments'] as Map<String, dynamic>?;
-        final patient = appt?['patients'] as Map<String, dynamic>?;
-        final doctor = appt?['doctors'] as Map<String, dynamic>?;
-        return MedicalRecord(
-          id: json['id']?.toString() ?? '',
-          appointmentId: json['appointment_id']?.toString() ?? '',
-          diagnosis: json['diagnosis'] ?? '',
-          prescription: json['prescription'] ?? '',
-          notes: json['notes'] ?? '',
-          patientName: patient?['name'],
-          doctorName: doctor?['name'],
-          appointmentDate: appt?['appointment_date'],
-        );
-      }).toList();
-
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        final cacheList = records.map((r) => {
-          'id': r.id,
-          'appointment_id': r.appointmentId,
-          'diagnosis': r.diagnosis,
-          'prescription': r.prescription,
-          'notes': r.notes,
-          'patientName': r.patientName,
-          'doctorName': r.doctorName,
-          'appointmentDate': r.appointmentDate,
+      final response = await _apiClient.get(ApiEndpoints.medicalRecords);
+      if (response['success'] == true && response['data'] != null) {
+        final List<dynamic> data = response['data'];
+        final records = data.map((json) {
+          final appt = json['appointment'] as Map<String, dynamic>?;
+          final patient = appt?['patient'] as Map<String, dynamic>?;
+          final doctor = appt?['doctor'] as Map<String, dynamic>?;
+          final pUser = patient?['user'] as Map<String, dynamic>?;
+          final dUser = doctor?['user'] as Map<String, dynamic>?;
+          
+          return MedicalRecord(
+            id: json['id']?.toString() ?? '',
+            appointmentId: json['appointment_id']?.toString() ?? '',
+            diagnosis: json['diagnosis'] ?? '',
+            prescription: json['prescription'] ?? '',
+            notes: json['notes'] ?? '',
+            patientName: pUser?['name'] ?? patient?['name'],
+            doctorName: dUser?['name'] ?? doctor?['name'],
+            appointmentDate: appt?['appointment_date'],
+          );
         }).toList();
-        await prefs.setString('cached_medical_records', jsonEncode(cacheList));
-      } catch (_) {}
 
-      state = state.copyWith(isLoading: false, records: records);
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          final cacheList = records.map((r) => {
+            'id': r.id,
+            'appointment_id': r.appointmentId,
+            'diagnosis': r.diagnosis,
+            'prescription': r.prescription,
+            'notes': r.notes,
+            'patientName': r.patientName,
+            'doctorName': r.doctorName,
+            'appointmentDate': r.appointmentDate,
+          }).toList();
+          await prefs.setString('cached_medical_records', jsonEncode(cacheList));
+        } catch (_) {}
+
+        state = state.copyWith(isLoading: false, records: records);
+      }
     } catch (e) {
       if (state.records.isNotEmpty) {
         state = state.copyWith(isLoading: false, error: e.toString());
@@ -127,7 +133,7 @@ class MedicalRecordNotifier extends Notifier<MedicalRecordState> {
   Future<void> createRecord(MedicalRecord record) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _supabase.from('medical_records').insert({
+      await _apiClient.post(ApiEndpoints.medicalRecords, {
         'appointment_id': record.appointmentId,
         'diagnosis': record.diagnosis,
         'prescription': record.prescription,
@@ -142,11 +148,11 @@ class MedicalRecordNotifier extends Notifier<MedicalRecordState> {
   Future<void> updateRecord(MedicalRecord record) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _supabase.from('medical_records').update({
+      await _apiClient.put('${ApiEndpoints.medicalRecords}/${record.id}', {
         'diagnosis': record.diagnosis,
         'prescription': record.prescription,
         'notes': record.notes,
-      }).eq('id', record.id);
+      });
       await loadRecords();
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -156,7 +162,7 @@ class MedicalRecordNotifier extends Notifier<MedicalRecordState> {
   Future<void> deleteRecord(String id) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _supabase.from('medical_records').delete().eq('id', id);
+      await _apiClient.delete('${ApiEndpoints.medicalRecords}/$id');
       final updatedList = state.records.where((r) => r.id != id).toList();
       state = state.copyWith(isLoading: false, records: updatedList);
     } catch (e) {

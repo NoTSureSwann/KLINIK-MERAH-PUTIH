@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class GlassButton extends StatelessWidget {
+class AppButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final IconData? icon;
   final Color? color;
   final bool isLoading;
 
-  const GlassButton({
+  const AppButton({
     super.key,
     required this.text,
     required this.onPressed,
@@ -29,7 +29,7 @@ class GlassButton extends StatelessWidget {
           backgroundColor: buttonColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(8),
           ),
           elevation: 0,
         ),

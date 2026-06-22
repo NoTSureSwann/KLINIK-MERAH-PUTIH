@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 
-class GlassConfirmationDialog extends StatelessWidget {
+class AppConfirmationDialog extends StatelessWidget {
   final String title;
   final String content;
   final VoidCallback onConfirm;
   final String confirmText;
   final bool isDestructive;
 
-  const GlassConfirmationDialog({
+  const AppConfirmationDialog({
     super.key,
     required this.title,
     required this.content,
@@ -20,7 +20,7 @@ class GlassConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       icon: Icon(
         isDestructive ? Icons.warning_rounded : Icons.info_outline_rounded,
         size: 48,
@@ -41,7 +41,7 @@ class GlassConfirmationDialog extends StatelessWidget {
         OutlinedButton(
           onPressed: () => Navigator.of(context).pop(),
           style: OutlinedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           ),
           child: const Text('Cancel'),
@@ -54,7 +54,7 @@ class GlassConfirmationDialog extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: isDestructive ? AppColors.error : AppColors.primary,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             elevation: 0,
           ),

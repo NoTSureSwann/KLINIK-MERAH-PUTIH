@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class GlassBottomNavigation extends StatelessWidget {
+class AppBottomNavigation extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
   final List<BottomNavigationBarItem> items;
 
-  const GlassBottomNavigation({
+  const AppBottomNavigation({
     super.key,
     required this.currentIndex,
     required this.onTap,
@@ -14,14 +14,14 @@ class GlassBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
-      elevation: 1,
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? Theme.of(context).colorScheme.surfaceContainerHighest
-          : Theme.of(context).colorScheme.surfaceContainerLowest,
-      indicatorColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+      elevation: 2,
+      backgroundColor: theme.colorScheme.surface,
+      indicatorColor: theme.colorScheme.primary.withValues(alpha: 0.14),
       destinations: items.map((item) {
         return NavigationDestination(
           icon: item.icon,

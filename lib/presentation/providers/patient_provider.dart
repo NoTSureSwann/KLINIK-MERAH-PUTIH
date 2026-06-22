@@ -1,8 +1,9 @@
+import '../../core/network/mock_supabase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/patient.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 // Dummy initial data
 final _dummyPatients = [
   const Patient(id: '1', userId: '2', nik: '3201123456789001', name: 'John Doe', email: 'john@example.com', phone: '081234567890', birthDate: '1990-01-01', gender: 'Male', address: 'Jl. Merdeka 1'),
@@ -44,7 +45,7 @@ class PatientState {
 }
 
 class PatientNotifier extends Notifier<PatientState> {
-  final _supabase = Supabase.instance.client;
+  final dynamic _supabase = mockSupabase;
 
   @override
   PatientState build() {

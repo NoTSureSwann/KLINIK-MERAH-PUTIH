@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../shared/widgets/glass_bottom_navigation.dart';
+import '../../../shared/widgets/app_bottom_navigation.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../shared/widgets/glass_drawer.dart';
+import '../../../shared/widgets/app_drawer.dart';
 import '../../providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +17,7 @@ class PatientDashboard extends ConsumerWidget {
     final user = ref.watch(authStateProvider).value;
 
     return Scaffold(
-      drawer: GlassDrawer(
+      drawer: AppDrawer(
         role: 'Patient',
         userName: user?.name ?? 'Guest',
         menuItems: const [
@@ -47,7 +47,7 @@ class PatientDashboard extends ConsumerWidget {
         child: navigationShell,
       ),
       extendBody: false,
-      bottomNavigationBar: GlassBottomNavigation(
+      bottomNavigationBar: AppBottomNavigation(
         currentIndex: navigationShell.currentIndex,
         onTap: (index) {
           navigationShell.goBranch(

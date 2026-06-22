@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
-import '../../../../shared/widgets/glass_container.dart';
-import '../../../../shared/widgets/glass_text_field.dart';
-import '../../../../shared/widgets/glass_button.dart';
+import '../../../../shared/widgets/app_app_bar.dart';
+import '../../../../shared/widgets/app_container.dart';
+import '../../../../shared/widgets/app_text_field.dart';
+import '../../../../shared/widgets/app_button.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../domain/entities/doctor.dart';
 import '../../../providers/doctor_provider.dart';
@@ -91,14 +91,14 @@ class _DoctorFormScreenState extends ConsumerState<DoctorFormScreen> {
         ),
         child: Column(
           children: [
-            GlassAppBar(
+            AppAppBar(
               title: isEditing ? 'Edit Doctor' : 'Create Doctor',
               showBackButton: true,
             ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
-                child: GlassContainer(
+                child: AppContainer(
                   padding: const EdgeInsets.all(24),
                   borderRadius: 24,
                   child: Form(
@@ -108,28 +108,28 @@ class _DoctorFormScreenState extends ConsumerState<DoctorFormScreen> {
                       children: [
                         Text('Doctor Information', style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: 24),
-                        GlassTextField(
+                        AppTextField(
                           controller: _nameCtrl,
                           hintText: 'Full Name (e.g., Dr. Budi)',
                           prefixIcon: Icons.person_outline,
                           validator: (val) => val == null || val.isEmpty ? 'Required field' : null,
                         ),
                         const SizedBox(height: 16),
-                        GlassTextField(
+                        AppTextField(
                           controller: _specializationCtrl,
                           hintText: 'Specialization',
                           prefixIcon: Icons.medical_services_outlined,
                           validator: (val) => val == null || val.isEmpty ? 'Required field' : null,
                         ),
                         const SizedBox(height: 16),
-                        GlassTextField(
+                        AppTextField(
                           controller: _emailCtrl,
                           hintText: 'Email Address',
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 16),
-                        GlassTextField(
+                        AppTextField(
                           controller: _phoneCtrl,
                           hintText: 'Phone Number',
                           prefixIcon: Icons.phone_outlined,
@@ -137,7 +137,7 @@ class _DoctorFormScreenState extends ConsumerState<DoctorFormScreen> {
                           validator: (val) => val == null || val.isEmpty ? 'Required field' : null,
                         ),
                         const SizedBox(height: 24),
-                        GlassTextField(
+                        AppTextField(
                           controller: _feeCtrl,
                           hintText: 'Consultation Fee',
                           prefixIcon: Icons.attach_money_outlined,
@@ -145,14 +145,14 @@ class _DoctorFormScreenState extends ConsumerState<DoctorFormScreen> {
                           validator: (val) => val == null || val.isEmpty ? 'Required field' : null,
                         ),
                         const SizedBox(height: 16),
-                        GlassTextField(
+                        AppTextField(
                           controller: _scheduleCtrl,
                           hintText: 'Schedule (e.g., Mon, Wed, Fri)',
                           prefixIcon: Icons.schedule_outlined,
                           validator: (val) => val == null || val.isEmpty ? 'Required field' : null,
                         ),
                         const SizedBox(height: 40),
-                        GlassButton(
+                        AppButton(
                           text: isLoading ? 'Saving...' : 'Save Doctor',
                           onPressed: isLoading ? () {} : _save,
                         ),

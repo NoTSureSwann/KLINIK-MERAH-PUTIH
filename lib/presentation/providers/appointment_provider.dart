@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../domain/entities/appointment.dart';
+import '../../core/network/network_provider.dart';
+import '../../core/network/api_client.dart';
+import '../../core/network/api_endpoints.dart';
 
 class AppointmentState {
   final bool isLoading;
@@ -43,10 +46,11 @@ class AppointmentState {
 }
 
 class AppointmentNotifier extends Notifier<AppointmentState> {
-  final _supabase = Supabase.instance.client;
+  late final ApiClient _apiClient;
 
   @override
   AppointmentState build() {
+    _apiClient = ref.watch(apiClientProvider);
     Future.microtask(() => loadAppointments());
     return AppointmentState(isLoading: true);
   }
@@ -68,48 +72,54 @@ class AppointmentNotifier extends Notifier<AppointmentState> {
           status: json['status'] ?? 'Scheduled',
           patientName: json['patientName'],
           doctorName: json['doctorName'],
+          symptoms: json['symptoms'],
+          complaints: json['complaints'],
         )).toList();
         state = state.copyWith(isLoading: false, appointments: cachedAppts);
       }
     } catch (_) {}
 
     try {
-      // Fetch from Supabase with joins
-      final data = await _supabase
-          .from('appointments')
-          .select('*, patients(name), doctors(name)')
-          .order('appointment_date', ascending: false);
-
-      final appointments = data.map((json) {
-        final patientMap = json['patients'] as Map<String, dynamic>?;
-        final doctorMap = json['doctors'] as Map<String, dynamic>?;
-        return Appointment(
-          id: json['id']?.toString() ?? '',
-          patientId: json['patient_id']?.toString() ?? '',
-          doctorId: json['doctor_id']?.toString() ?? '',
-          appointmentDate: json['appointment_date'] ?? '',
-          status: json['status'] ?? 'Scheduled',
-          patientName: patientMap?['name'],
-          doctorName: doctorMap?['name'],
-        );
-      }).toList();
-
-      // Save to cache
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        final cacheList = appointments.map((a) => {
-          'id': a.id,
-          'patient_id': a.patientId,
-          'doctor_id': a.doctorId,
-          'appointment_date': a.appointmentDate,
-          'status': a.status,
-          'patientName': a.patientName,
-          'doctorName': a.doctorName,
+      final response = await _apiClient.get(ApiEndpoints.appointments);
+      if (response['success'] == true && response['data'] != null) {
+        final List<dynamic> data = response['data'];
+        final appointments = data.map((json) {
+          final patientMap = json['patient'] as Map<String, dynamic>?;
+          final doctorMap = json['doctor'] as Map<String, dynamic>?;
+          final pUser = patientMap?['user'] as Map<String, dynamic>?;
+          final dUser = doctorMap?['user'] as Map<String, dynamic>?;
+          return Appointment(
+            id: json['id']?.toString() ?? '',
+            patientId: json['patient_id']?.toString() ?? '',
+            doctorId: json['doctor_id']?.toString() ?? '',
+            appointmentDate: json['appointment_date'] ?? '',
+            status: json['status'] ?? 'Pending',
+            patientName: pUser?['name'] ?? patientMap?['name'],
+            doctorName: dUser?['name'] ?? doctorMap?['name'],
+            symptoms: json['symptoms'],
+            complaints: json['complaints'],
+          );
         }).toList();
-        await prefs.setString('cached_appointments', jsonEncode(cacheList));
-      } catch (_) {}
 
-      state = state.copyWith(isLoading: false, appointments: appointments);
+        // Save to cache
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          final cacheList = appointments.map((a) => {
+            'id': a.id,
+            'patient_id': a.patientId,
+            'doctor_id': a.doctorId,
+            'appointment_date': a.appointmentDate,
+            'status': a.status,
+            'patientName': a.patientName,
+            'doctorName': a.doctorName,
+            'symptoms': a.symptoms,
+            'complaints': a.complaints,
+          }).toList();
+          await prefs.setString('cached_appointments', jsonEncode(cacheList));
+        } catch (_) {}
+
+        state = state.copyWith(isLoading: false, appointments: appointments);
+      }
     } catch (e) {
       if (state.appointments.isNotEmpty) {
         state = state.copyWith(isLoading: false, error: e.toString());
@@ -126,13 +136,14 @@ class AppointmentNotifier extends Notifier<AppointmentState> {
   Future<void> createAppointment(Appointment appointment) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _supabase.from('appointments').insert({
+      await _apiClient.post(ApiEndpoints.appointments, {
         'patient_id': appointment.patientId,
         'doctor_id': appointment.doctorId,
         'appointment_date': appointment.appointmentDate,
-        'status': appointment.status,
+        'symptoms': appointment.symptoms,
+        'complaints': appointment.complaints,
       });
-      await loadAppointments(); // Reload to get names via join
+      await loadAppointments(); 
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -141,12 +152,14 @@ class AppointmentNotifier extends Notifier<AppointmentState> {
   Future<void> updateAppointment(Appointment appointment) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _supabase.from('appointments').update({
+      await _apiClient.put('${ApiEndpoints.appointments}/${appointment.id}', {
         'patient_id': appointment.patientId,
         'doctor_id': appointment.doctorId,
         'appointment_date': appointment.appointmentDate,
         'status': appointment.status,
-      }).eq('id', appointment.id);
+        'symptoms': appointment.symptoms,
+        'complaints': appointment.complaints,
+      });
       await loadAppointments();
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -156,7 +169,7 @@ class AppointmentNotifier extends Notifier<AppointmentState> {
   Future<void> deleteAppointment(String id) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await _supabase.from('appointments').delete().eq('id', id);
+      await _apiClient.delete('${ApiEndpoints.appointments}/$id');
       final updatedList = state.appointments.where((a) => a.id != id).toList();
       state = state.copyWith(isLoading: false, appointments: updatedList);
     } catch (e) {

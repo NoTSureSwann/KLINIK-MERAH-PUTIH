@@ -1,7 +1,6 @@
 class ApiEndpoints {
-  // Replace with your actual Laravel API Base URL
-  // If testing on Android Emulator, use 10.0.2.2 instead of localhost
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  // Base URL for the API
+  static const String baseUrl = 'http://localhost:8000/api';
 
   // Auth
   static const String login = '/login';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../shared/widgets/glass_bottom_navigation.dart';
+import '../../../shared/widgets/app_bottom_navigation.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../shared/widgets/glass_drawer.dart';
+import '../../../shared/widgets/app_drawer.dart';
 import '../../providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,12 +17,15 @@ class DoctorDashboard extends ConsumerWidget {
     final user = ref.watch(authStateProvider).value;
 
     return Scaffold(
-      drawer: GlassDrawer(
+      drawer: AppDrawer(
         role: 'Doctor',
         userName: user?.name ?? 'Doctor',
         menuItems: const [
           DrawerMenuItem(title: 'My Schedule', icon: Icons.calendar_today, route: '/doctor/schedule'),
-          DrawerMenuItem(title: 'Patient Records', icon: Icons.folder_shared, route: '/doctor/records'),
+          DrawerMenuItem(title: 'My Patients', icon: Icons.group, route: '/doctor/patients'),
+          DrawerMenuItem(title: 'Medicines', icon: Icons.medication, route: '/doctor/medicines'),
+          DrawerMenuItem(title: 'Services', icon: Icons.local_hospital, route: '/doctor/services'),
+          DrawerMenuItem(title: 'Medical Records', icon: Icons.receipt_long, route: '/doctor/medical_records'),
           DrawerMenuItem(title: 'Settings', icon: Icons.settings, route: '/doctor/profile'),
         ],
       ),
@@ -47,7 +50,7 @@ class DoctorDashboard extends ConsumerWidget {
         child: navigationShell,
       ),
       extendBody: false,
-      bottomNavigationBar: GlassBottomNavigation(
+      bottomNavigationBar: AppBottomNavigation(
         currentIndex: navigationShell.currentIndex,
         onTap: (index) {
           navigationShell.goBranch(

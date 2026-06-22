@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../../shared/widgets/glass_container.dart';
-import '../../../../shared/widgets/glass_dashboard_card.dart';
+import '../../../../shared/widgets/app_container.dart';
+import '../../../../shared/widgets/app_dashboard_card.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/doctor_dashboard_provider.dart';
@@ -59,7 +59,7 @@ class DoctorHomeTab extends ConsumerWidget {
                 if (dashboardState.isLoading)
                   const Center(child: CircularProgressIndicator())
                 else if (dashboardState.error != null)
-                  GlassContainer(
+                  AppContainer(
                     padding: const EdgeInsets.all(16),
                     child: Center(
                       child: Text(
@@ -76,7 +76,7 @@ class DoctorHomeTab extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: GlassDashboardCard(
+                        child: AppDashboardCard(
                           title: 'Appointments',
                           value: '${dashboardState.todayAppointmentsCount}',
                           icon: Icons.calendar_today,
@@ -85,7 +85,7 @@ class DoctorHomeTab extends ConsumerWidget {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: GlassDashboardCard(
+                        child: AppDashboardCard(
                           title: 'Waiting Queue',
                           value: '${dashboardState.activeQueueCount}',
                           icon: Icons.people_alt,
@@ -123,7 +123,7 @@ class DoctorHomeTab extends ConsumerWidget {
   Widget _buildQueueList(BuildContext context, DoctorDashboardState state) {
     final activeQueues = state.queues.where((q) => q.status != 'Completed').toList();
     if (activeQueues.isEmpty) {
-      return const GlassContainer(
+      return const AppContainer(
         width: double.infinity,
         padding: EdgeInsets.all(24),
         child: Center(child: Text('No active queues for you at the moment.')),
@@ -139,7 +139,7 @@ class DoctorHomeTab extends ConsumerWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final q = activeQueues[index];
-        return GlassContainer(
+        return AppContainer(
           padding: const EdgeInsets.all(16),
           borderRadius: 16,
           child: Row(

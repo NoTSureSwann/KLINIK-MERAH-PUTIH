@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../../shared/widgets/glass_container.dart';
+import '../../../../shared/widgets/app_container.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/patient_dashboard_provider.dart';
@@ -58,7 +58,7 @@ class PatientHomeTab extends ConsumerWidget {
                 if (dashboardState.isLoading)
                   const Center(child: CircularProgressIndicator())
                 else if (dashboardState.error != null)
-                  GlassContainer(
+                  AppContainer(
                     padding: const EdgeInsets.all(16),
                     child: Center(
                       child: Text(
@@ -103,7 +103,7 @@ class PatientHomeTab extends ConsumerWidget {
   Widget _buildActiveQueue(BuildContext context, PatientDashboardState state) {
     final activeQueues = state.queues.where((q) => q.status != 'Completed').toList();
     if (activeQueues.isEmpty) {
-      return const GlassContainer(
+      return const AppContainer(
         width: double.infinity,
         padding: EdgeInsets.all(24),
         child: Center(child: Text('You have no active queues.')),
@@ -113,7 +113,7 @@ class PatientHomeTab extends ConsumerWidget {
     final q = activeQueues.first;
     final timeFormat = DateFormat('HH:mm');
 
-    return GlassContainer(
+    return AppContainer(
       padding: const EdgeInsets.all(20),
       borderRadius: 24,
       child: Row(
@@ -157,7 +157,7 @@ class PatientHomeTab extends ConsumerWidget {
 
   Widget _buildAppointments(BuildContext context, PatientDashboardState state) {
     if (state.appointments.isEmpty) {
-      return const GlassContainer(
+      return const AppContainer(
         width: double.infinity,
         padding: EdgeInsets.all(24),
         child: Center(child: Text('No recent appointments found.')),
@@ -173,7 +173,7 @@ class PatientHomeTab extends ConsumerWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final a = state.appointments[index];
-        return GlassContainer(
+        return AppContainer(
           padding: const EdgeInsets.all(16),
           borderRadius: 16,
           child: Row(

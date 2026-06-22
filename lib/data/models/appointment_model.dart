@@ -13,6 +13,8 @@ class AppointmentModel extends Appointment {
     required super.status,
     super.patientName,
     super.doctorName,
+    super.symptoms,
+    super.complaints,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) => _$AppointmentModelFromJson(json);
@@ -27,6 +29,8 @@ class AppointmentModel extends Appointment {
       status: entity.status,
       patientName: entity.patientName,
       doctorName: entity.doctorName,
+      symptoms: entity.symptoms,
+      complaints: entity.complaints,
     );
   }
 }

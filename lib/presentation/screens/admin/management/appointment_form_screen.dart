@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../domain/entities/appointment.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
-import '../../../../shared/widgets/glass_container.dart';
-import '../../../../shared/widgets/glass_button.dart';
+import '../../../../shared/widgets/app_app_bar.dart';
+import '../../../../shared/widgets/app_container.dart';
+import '../../../../shared/widgets/app_button.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../providers/appointment_provider.dart';
 import '../../../providers/patient_provider.dart';
@@ -50,7 +50,7 @@ class _AppointmentFormScreenState extends ConsumerState<AppointmentFormScreen> {
     });
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedPatientId == null || _selectedDoctorId == null || _selectedDate == null || _selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,12 +76,31 @@ class _AppointmentFormScreenState extends ConsumerState<AppointmentFormScreen> {
     );
 
     if (widget.appointment == null) {
-      ref.read(appointmentProvider.notifier).createAppointment(appointment);
+      await ref.read(appointmentProvider.notifier).createAppointment(appointment);
     } else {
-      ref.read(appointmentProvider.notifier).updateAppointment(appointment);
+      await ref.read(appointmentProvider.notifier).updateAppointment(appointment);
     }
 
-    context.pop();
+    if (mounted) {
+      final appointmentState = ref.read(appointmentProvider);
+      if (appointmentState.error != null) {
+        final errorMsg = appointmentState.error!.replaceAll('Exception: ', '');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $errorMsg'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Appointment saved successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        context.pop();
+      }
+    }
   }
 
   @override
@@ -112,13 +131,13 @@ class _AppointmentFormScreenState extends ConsumerState<AppointmentFormScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              GlassAppBar(
+              AppAppBar(
                 title: widget.appointment == null ? 'Create Appointment' : 'Edit Appointment',
                 showBackButton: true,
               ),
               Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: GlassContainer(
+                child: AppContainer(
                   padding: const EdgeInsets.all(24),
                   borderRadius: 24,
                   child: Form(
@@ -233,7 +252,7 @@ class _AppointmentFormScreenState extends ConsumerState<AppointmentFormScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        GlassButton(
+                        AppButton(
                           text: 'Save Appointment',
                           onPressed: _save,
                           isLoading: ref.watch(appointmentProvider).isLoading,

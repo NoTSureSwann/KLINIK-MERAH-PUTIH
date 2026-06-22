@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
-import '../../../../shared/widgets/glass_container.dart';
-import '../../../../shared/widgets/glass_search_bar.dart';
-import '../../../../shared/widgets/glass_confirmation_dialog.dart';
+import '../../../../shared/widgets/app_app_bar.dart';
+import '../../../../shared/widgets/app_container.dart';
+import '../../../../shared/widgets/app_search_bar.dart';
+import '../../../../shared/widgets/app_confirmation_dialog.dart';
 import '../../../../shared/widgets/state_indicators.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../providers/appointment_provider.dart';
@@ -30,7 +30,7 @@ class AppointmentListScreen extends ConsumerWidget {
         ),
         child: Column(
           children: [
-            GlassAppBar(
+            AppAppBar(
               title: 'Appointment Management',
               showBackButton: true,
               actions: [
@@ -42,7 +42,7 @@ class AppointmentListScreen extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: GlassSearchBar(
+              child: AppSearchBar(
                 hintText: 'Search by Patient, Doctor, or Status...',
                 onChanged: (val) => ref.read(appointmentProvider.notifier).setSearchQuery(val),
               ),
@@ -90,7 +90,7 @@ class AppointmentListScreen extends ConsumerWidget {
               ? DateFormat('dd MMM yyyy, HH:mm').format(apptDate)
               : appointment.appointmentDate;
 
-            return GlassContainer(
+            return AppContainer(
               padding: const EdgeInsets.all(16),
               borderRadius: 16,
               child: Row(
@@ -134,7 +134,7 @@ class AppointmentListScreen extends ConsumerWidget {
                       } else if (value == 'delete') {
                         showDialog(
                           context: context,
-                          builder: (ctx) => GlassConfirmationDialog(
+                          builder: (ctx) => AppConfirmationDialog(
                             title: 'Delete Appointment',
                             content: 'Are you sure you want to delete this appointment?',
                             isDestructive: true,

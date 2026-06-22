@@ -1,5 +1,6 @@
+import '../../core/network/mock_supabase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../domain/entities/appointment.dart';
 import '../../domain/entities/queue.dart';
 
@@ -40,7 +41,7 @@ class DoctorDashboardState {
 }
 
 class DoctorDashboardNotifier extends Notifier<DoctorDashboardState> {
-  final _supabase = Supabase.instance.client;
+  final dynamic _supabase = mockSupabase;
 
   @override
   DoctorDashboardState build() {

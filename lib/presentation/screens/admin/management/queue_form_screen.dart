@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../domain/entities/queue.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
-import '../../../../shared/widgets/glass_container.dart';
-import '../../../../shared/widgets/glass_button.dart';
-import '../../../../shared/widgets/glass_text_field.dart';
+import '../../../../shared/widgets/app_app_bar.dart';
+import '../../../../shared/widgets/app_container.dart';
+import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../providers/queue_provider.dart';
 import '../../../providers/appointment_provider.dart';
@@ -94,13 +94,13 @@ class _QueueFormScreenState extends ConsumerState<QueueFormScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              GlassAppBar(
+              AppAppBar(
                 title: widget.queue == null ? 'Create Queue' : 'Edit Queue',
                 showBackButton: true,
               ),
               Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: GlassContainer(
+                child: AppContainer(
                   padding: const EdgeInsets.all(24),
                   borderRadius: 24,
                   child: Form(
@@ -121,7 +121,7 @@ class _QueueFormScreenState extends ConsumerState<QueueFormScreen> {
                         ),
                         const SizedBox(height: 20),
                         
-                        GlassTextField(
+                        AppTextField(
                           controller: _queueNumberController,
                           hintText: 'Queue Number (e.g., 12)',
                           prefixIcon: Icons.format_list_numbered,
@@ -130,7 +130,7 @@ class _QueueFormScreenState extends ConsumerState<QueueFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         
-                        GlassTextField(
+                        AppTextField(
                           controller: _estimatedTimeController,
                           hintText: 'Estimated Time (e.g., 10:30 AM)',
                           prefixIcon: Icons.access_time,
@@ -152,7 +152,7 @@ class _QueueFormScreenState extends ConsumerState<QueueFormScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        GlassButton(
+                        AppButton(
                           text: 'Save Queue',
                           onPressed: _save,
                           isLoading: ref.watch(queueProvider).isLoading,

@@ -9,6 +9,7 @@ class UserModel extends User {
     required super.id,
     required super.name,
     required super.email,
+    super.phone,
     required super.role,
   });
 
@@ -20,6 +21,7 @@ class UserModel extends User {
       id: user.id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
       role: user.role,
     );
   }

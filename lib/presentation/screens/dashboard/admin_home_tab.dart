@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import '../../../shared/widgets/glass_app_bar.dart';
-import '../../../shared/widgets/glass_container.dart';
-import '../../../shared/widgets/glass_button.dart';
-import '../../../shared/widgets/glass_dashboard_card.dart';
+import '../../../shared/widgets/app_app_bar.dart';
+import '../../../shared/widgets/app_container.dart';
+import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_dashboard_card.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/analytics_provider.dart';
@@ -21,7 +21,7 @@ class AdminHomeTab extends ConsumerWidget {
 
     return Column(
       children: [
-        GlassAppBar(
+        AppAppBar(
           title: 'Admin Dashboard',
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
@@ -73,25 +73,25 @@ class AdminHomeTab extends ConsumerWidget {
                       mainAxisSpacing: 16,
                       childAspectRatio: 1.5,
                       children: [
-                        GlassDashboardCard(
+                        AppDashboardCard(
                           title: 'Total Patients',
                           value: '${analytics.totalPatients}',
                           icon: Icons.personal_injury_rounded,
                           iconColor: AppColors.primary,
                         ),
-                        GlassDashboardCard(
+                        AppDashboardCard(
                           title: 'Active Queue',
                           value: '${analytics.activeQueue}',
                           icon: Icons.people_alt_rounded,
                           iconColor: AppColors.secondary,
                         ),
-                        GlassDashboardCard(
+                        AppDashboardCard(
                           title: 'Daily Revenue',
                           value: currencyFormatter.format(analytics.dailyRevenue),
                           icon: Icons.payments_rounded,
                           iconColor: AppColors.success,
                         ),
-                        GlassDashboardCard(
+                        AppDashboardCard(
                           title: 'Total Doctors',
                           value: '${analytics.totalDoctors}',
                           icon: Icons.medical_information_rounded,
@@ -113,42 +113,42 @@ class AdminHomeTab extends ConsumerWidget {
                     mainAxisSpacing: 16,
                     childAspectRatio: 1.1,
                     children: [
-                      GlassDashboardCard(
+                      AppDashboardCard(
                         title: 'Patient\nManagement',
                         value: '',
                         icon: Icons.personal_injury_rounded,
                         iconColor: AppColors.primary,
                         onTap: () => context.go('/admin/management/patients'),
                       ),
-                      GlassDashboardCard(
+                      AppDashboardCard(
                         title: 'Doctor\nManagement',
                         value: '',
                         icon: Icons.medical_information_rounded,
                         iconColor: AppColors.secondary,
                         onTap: () => context.go('/admin/management/doctors'),
                       ),
-                      GlassDashboardCard(
+                      AppDashboardCard(
                         title: 'Appointment\nManagement',
                         value: '',
                         icon: Icons.calendar_month_rounded,
                         iconColor: AppColors.warning,
                         onTap: () => context.go('/admin/management/appointments'),
                       ),
-                      GlassDashboardCard(
+                      AppDashboardCard(
                         title: 'Payment\nManagement',
                         value: '',
                         icon: Icons.payments_rounded,
                         iconColor: AppColors.success,
                         onTap: () => context.go('/admin/management/payments'),
                       ),
-                      GlassDashboardCard(
+                      AppDashboardCard(
                         title: 'Queue\nManagement',
                         value: '',
                         icon: Icons.people_alt_rounded,
                         iconColor: AppColors.primary,
                         onTap: () => context.go('/admin/management/queues'),
                       ),
-                      GlassDashboardCard(
+                      AppDashboardCard(
                         title: 'Medical\nRecords',
                         value: '',
                         icon: Icons.medical_services_rounded,
@@ -165,7 +165,7 @@ class AdminHomeTab extends ConsumerWidget {
                   if (analytics.isLoading)
                     const Center(child: CircularProgressIndicator())
                   else ...[
-                    GlassContainer(
+                    AppContainer(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       borderRadius: 24,
@@ -211,7 +211,7 @@ class AdminHomeTab extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    GlassContainer(
+                    AppContainer(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       borderRadius: 24,
@@ -254,7 +254,7 @@ class AdminHomeTab extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    GlassContainer(
+                    AppContainer(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       borderRadius: 24,
@@ -290,7 +290,7 @@ class AdminHomeTab extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: GlassButton(
+                        child: AppButton(
                           text: 'Export PDF',
                           icon: Icons.picture_as_pdf_rounded,
                           onPressed: () {
@@ -302,7 +302,7 @@ class AdminHomeTab extends ConsumerWidget {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: GlassButton(
+                        child: AppButton(
                           text: 'Export Excel',
                           icon: Icons.table_view_rounded,
                           onPressed: () {

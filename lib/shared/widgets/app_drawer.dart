@@ -16,12 +16,12 @@ class DrawerMenuItem {
   });
 }
 
-class GlassDrawer extends ConsumerWidget {
+class AppDrawer extends ConsumerWidget {
   final String role;
   final String userName;
   final List<DrawerMenuItem> menuItems;
 
-  const GlassDrawer({
+  const AppDrawer({
     super.key,
     required this.role,
     required this.userName,
@@ -45,8 +45,12 @@ class GlassDrawer extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  child: const Icon(Icons.person, size: 30, color: Colors.white),
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.person,
+                    size: 30,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -63,13 +67,13 @@ class GlassDrawer extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     role,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -90,7 +94,7 @@ class GlassDrawer extends ConsumerWidget {
                 return ListTile(
                   leading: Icon(item.icon, color: Theme.of(context).colorScheme.primary),
                   title: Text(item.title),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   onTap: () {
                     Navigator.pop(context);
                     context.push(item.route);
@@ -108,7 +112,7 @@ class GlassDrawer extends ConsumerWidget {
             child: ListTile(
               leading: const Icon(Icons.logout, color: AppColors.error),
               title: const Text('Logout', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               onTap: () async {
                 Navigator.pop(context);
                 await ref.read(authStateProvider.notifier).logout();

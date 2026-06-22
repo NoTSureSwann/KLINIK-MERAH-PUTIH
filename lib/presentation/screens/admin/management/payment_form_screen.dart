@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../domain/entities/payment.dart';
-import '../../../../shared/widgets/glass_app_bar.dart';
-import '../../../../shared/widgets/glass_container.dart';
-import '../../../../shared/widgets/glass_button.dart';
-import '../../../../shared/widgets/glass_text_field.dart';
+import '../../../../shared/widgets/app_app_bar.dart';
+import '../../../../shared/widgets/app_container.dart';
+import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../providers/payment_provider.dart';
 import '../../../providers/patient_provider.dart';
@@ -106,13 +106,13 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              GlassAppBar(
+              AppAppBar(
                 title: widget.payment == null ? 'Create Payment' : 'Edit Payment',
                 showBackButton: true,
               ),
               Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: GlassContainer(
+                child: AppContainer(
                   padding: const EdgeInsets.all(24),
                   borderRadius: 24,
                   child: Form(
@@ -146,7 +146,7 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        GlassTextField(
+                        AppTextField(
                           controller: _invoiceController,
                           hintText: 'Invoice Number',
                           prefixIcon: Icons.receipt,
@@ -154,7 +154,7 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        GlassTextField(
+                        AppTextField(
                           controller: _amountController,
                           hintText: 'Amount (Rp)',
                           prefixIcon: Icons.attach_money,
@@ -209,7 +209,7 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        GlassButton(
+                        AppButton(
                           text: 'Save Payment',
                           onPressed: _save,
                           isLoading: ref.watch(paymentProvider).isLoading,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../shared/widgets/glass_app_bar.dart';
-import '../../../shared/widgets/glass_bottom_navigation.dart';
-import '../../../shared/widgets/glass_dashboard_card.dart';
-import '../../../shared/widgets/glass_container.dart';
+import '../../../shared/widgets/app_app_bar.dart';
+import '../../../shared/widgets/app_bottom_navigation.dart';
+import '../../../shared/widgets/app_dashboard_card.dart';
+import '../../../shared/widgets/app_container.dart';
 import '../../providers/auth_provider.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -44,7 +44,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
         child: Column(
           children: [
-            GlassAppBar(
+            AppAppBar(
               title: 'Dashboard',
               leading: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -94,28 +94,28 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
                         children: [
-                          GlassDashboardCard(
+                          AppDashboardCard(
                             title: 'Total Patients',
                             value: '1,245',
                             icon: Icons.people_outline,
                             iconColor: AppColors.primary,
                             onTap: () {},
                           ),
-                          GlassDashboardCard(
+                          AppDashboardCard(
                             title: 'Appointments',
                             value: '48',
                             icon: Icons.calendar_today_outlined,
                             iconColor: AppColors.secondary,
                             onTap: () {},
                           ),
-                          GlassDashboardCard(
+                          AppDashboardCard(
                             title: 'Revenue',
                             value: '\$12k',
                             icon: Icons.attach_money,
                             iconColor: AppColors.success,
                             onTap: () {},
                           ),
-                          GlassDashboardCard(
+                          AppDashboardCard(
                             title: 'Alerts',
                             value: '3',
                             icon: Icons.warning_amber_rounded,
@@ -130,7 +130,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: 16),
-                      GlassContainer(
+                      AppContainer(
                         padding: const EdgeInsets.all(16),
                         borderRadius: 24,
                         child: Column(
@@ -162,7 +162,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
       ),
       extendBody: false,
-      bottomNavigationBar: GlassBottomNavigation(
+      bottomNavigationBar: AppBottomNavigation(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {

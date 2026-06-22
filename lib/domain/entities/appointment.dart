@@ -8,6 +8,8 @@ class Appointment extends Equatable {
   final String status;
   final String? patientName; // joined from patient
   final String? doctorName; // joined from doctor
+  final String? symptoms;
+  final String? complaints;
 
   const Appointment({
     required this.id,
@@ -17,8 +19,20 @@ class Appointment extends Equatable {
     required this.status,
     this.patientName,
     this.doctorName,
+    this.symptoms,
+    this.complaints,
   });
 
   @override
-  List<Object?> get props => [id, patientId, doctorId, appointmentDate, status, patientName, doctorName];
+  List<Object?> get props => [
+        id,
+        patientId,
+        doctorId,
+        appointmentDate,
+        status,
+        patientName,
+        doctorName,
+        symptoms,
+        complaints,
+      ];
 }

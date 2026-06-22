@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
-import '../../../shared/widgets/glass_container.dart';
-import '../../../shared/widgets/glass_text_field.dart';
-import '../../../shared/widgets/glass_button.dart';
+import '../../../shared/widgets/app_container.dart';
+import '../../../shared/widgets/app_text_field.dart';
+import '../../../shared/widgets/app_button.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +14,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -28,27 +29,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
-    final success = await ref.read(authStateProvider.notifier).login(
-          _emailController.text.trim(),
-          _passwordController.text,
-          rememberMe: _rememberMe,
-        );
+    try {
+      final success = await ref.read(authStateProvider.notifier).login(
+            _emailController.text.trim(),
+            _passwordController.text,
+            rememberMe: _rememberMe,
+          );
 
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (success) {
-        context.go('/dashboard');
-      } else {
+      if (mounted) {
         setState(() {
-          _errorMessage = 'Invalid email or user not found (try patient@test.com)';
+          _isLoading = false;
         });
+        if (success) {
+          context.go('/');
+        } else {
+          // Fallback if login returned false but didn't throw (though it should throw now)
+          setState(() {
+            _errorMessage = 'Gagal login.';
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString().replaceAll('Exception: ', '');
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_errorMessage ?? 'Terjadi kesalahan')),
+        );
       }
     }
   }
@@ -56,24 +74,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: Theme.of(context).brightness == Brightness.dark
-                ? [
-                    const Color(0xFF0F172A),
-                    const Color(0xFF1E293B),
-                    const Color(0xFF334155),
-                  ]
-                : [
-                    const Color(0xFFE0F2FE),
-                    const Color(0xFFDBEAFE),
-                    const Color(0xFFBFDBFE),
-                  ],
-          ),
-        ),
+      body: ColoredBox(
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -112,70 +114,93 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                   ),
                   const SizedBox(height: 48),
-                  GlassContainer(
+                  AppContainer(
                     padding: const EdgeInsets.all(24),
                     borderRadius: 32,
-                    child: Column(
-                      children: [
-                        if (_errorMessage != null) ...[
-                          Text(
-                            _errorMessage!,
-                            style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          if (_errorMessage != null) ...[
+                            Text(
+                              _errorMessage!,
+                              style: TextStyle(color: Theme.of(context).colorScheme.error),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                          AppTextField(
+                            controller: _emailController,
+                            hintText: 'Email Address',
+                            prefixIcon: Icons.email_outlined,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Field ini tidak boleh kosong';
+                              }
+                              final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                              if (!emailRegex.hasMatch(value)) {
+                                return 'Masukkan email yang valid';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 16),
-                        ],
-                        GlassTextField(
-                          controller: _emailController,
-                          hintText: 'Email Address',
-                          prefixIcon: Icons.email_outlined,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        const SizedBox(height: 16),
-                        GlassTextField(
-                          controller: _passwordController,
-                          hintText: 'Password',
-                          prefixIcon: Icons.lock_outline,
-                          obscureText: true,
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: _rememberMe,
-                                  onChanged: (value) {
-                                    setState(() => _rememberMe = value ?? false);
-                                  },
-                                ),
-                                Text('Remember Me', style: Theme.of(context).textTheme.bodyMedium),
-                              ],
-                            ),
-                            TextButton(
-                              onPressed: () {},
-                              child: Text(
-                                'Forgot Password?',
-                                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 32),
-                        GlassButton(
-                          text: 'Sign In',
-                          isLoading: _isLoading,
-                          onPressed: _handleLogin,
-                        ),
-                        const SizedBox(height: 16),
-                        TextButton(
-                          onPressed: () => context.go('/register'),
-                          child: Text(
-                            'Don\'t have an account? Register',
-                            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                          AppTextField(
+                            controller: _passwordController,
+                            hintText: 'Password',
+                            prefixIcon: Icons.lock_outline,
+                            obscureText: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Field ini tidak boleh kosong';
+                              }
+                              if (value.length < 6) {
+                                return 'Password minimal 6 karakter';
+                              }
+                              return null;
+                            },
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: _rememberMe,
+                                    onChanged: (value) {
+                                      setState(() => _rememberMe = value ?? false);
+                                    },
+                                  ),
+                                  Text('Remember Me', style: Theme.of(context).textTheme.bodyMedium),
+                                ],
+                              ),
+                              TextButton(
+                                onPressed: () {},
+                                child: Text(
+                                  'Forgot Password?',
+                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 32),
+                          AppButton(
+                            text: 'Sign In',
+                            isLoading: _isLoading,
+                            onPressed: _handleLogin,
+                          ),
+                          const SizedBox(height: 16),
+                          TextButton(
+                            onPressed: () => context.go('/register'),
+                            child: Text(
+                              'Don\'t have an account? Register',
+                              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

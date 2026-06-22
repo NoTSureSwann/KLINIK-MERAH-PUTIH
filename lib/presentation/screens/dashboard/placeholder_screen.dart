@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../shared/widgets/glass_app_bar.dart';
-import '../../../shared/widgets/glass_container.dart';
+import '../../../shared/widgets/app_app_bar.dart';
+import '../../../shared/widgets/app_container.dart';
 import '../../providers/auth_provider.dart';
 
 class PlaceholderScreen extends ConsumerWidget {
@@ -19,7 +19,7 @@ class PlaceholderScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
-        GlassAppBar(
+        AppAppBar(
           title: title,
           actions: [
             IconButton(
@@ -34,7 +34,7 @@ class PlaceholderScreen extends ConsumerWidget {
         ),
         Expanded(
           child: Center(
-            child: GlassContainer(
+            child: AppContainer(
               width: 300,
               height: 300,
               padding: const EdgeInsets.all(24),

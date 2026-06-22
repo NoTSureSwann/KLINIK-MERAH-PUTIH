@@ -49,6 +49,7 @@ dependencies:
   dio: ^5.9.2
   supabase_flutter: ^2.15.0
   intl: ^0.20.2
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
