@@ -18,35 +18,61 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+    final effectiveLeading = showBackButton
+        ? IconButton(
+            icon: Icon(Icons.arrow_back_ios_new_rounded,
+                color: Theme.of(context).colorScheme.primary),
+            onPressed: () => Navigator.of(context).pop(),
+          )
+        : leading ??
+            (Navigator.canPop(context)
+                ? IconButton(
+                    icon: Icon(Icons.arrow_back_ios_new,
+                        color: Theme.of(context).colorScheme.primary),
+                    onPressed: () => Navigator.pop(context),
+                  )
+                : null);
+
+    return SafeArea(
+      bottom: false,
+      child: Container(
+        height: height,
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          border: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
             ),
+          ),
+        ),
+        child: Row(
+          children: [
+            if (effectiveLeading != null)
+              effectiveLeading
+            else
+              const SizedBox(width: 48),
+            Expanded(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (actions != null)
+              Row(mainAxisSize: MainAxisSize.min, children: actions!)
+            else
+              const SizedBox(width: 48),
+          ],
+        ),
       ),
-      centerTitle: true,
-      elevation: 0,
-      scrolledUnderElevation: 1,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.95),
-      leading: showBackButton
-          ? IconButton(
-              icon: Icon(Icons.arrow_back_ios_new_rounded,
-                  color: Theme.of(context).colorScheme.primary),
-              onPressed: () => Navigator.of(context).pop(),
-            )
-          : leading ??
-              (Navigator.canPop(context)
-                  ? IconButton(
-                      icon: Icon(Icons.arrow_back_ios_new,
-                          color: Theme.of(context).colorScheme.primary),
-                      onPressed: () => Navigator.pop(context),
-                    )
-                  : null),
-      actions: actions,
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(height + 16);
 }
