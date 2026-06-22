@@ -41,9 +41,9 @@ class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
 
   RouterNotifier(this._ref) {
-    _ref.listen(authStateProvider, (_, __) => notifyListeners());
-    _ref.listen(splashFinishedProvider, (_, __) => notifyListeners());
-    _ref.listen(onboardingFinishedProvider, (_, __) => notifyListeners());
+    _ref.listen(authStateProvider, (_, _) => notifyListeners());
+    _ref.listen(splashFinishedProvider, (_, _) => notifyListeners());
+    _ref.listen(onboardingFinishedProvider, (_, _) => notifyListeners());
   }
 }
 

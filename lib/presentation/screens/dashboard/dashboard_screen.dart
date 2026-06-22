@@ -161,7 +161,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ],
         ),
       ),
-      extendBody: true,
+      extendBody: false,
       bottomNavigationBar: GlassBottomNavigation(
         currentIndex: _currentIndex,
         onTap: (index) {

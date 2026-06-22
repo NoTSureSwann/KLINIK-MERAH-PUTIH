@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'glass_container.dart';
 
 class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -19,54 +18,35 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: GlassContainer(
-          height: height,
-          borderRadius: 20,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (showBackButton)
-                IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new_rounded, color: Theme.of(context).colorScheme.primary),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              else if (leading != null)
-                leading!
-              else if (Navigator.canPop(context))
-                IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).colorScheme.primary),
-                  onPressed: () => Navigator.pop(context),
-                )
-              else
-                const SizedBox(width: 48), // Balance spacing
-                
-              Expanded(
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              
-              if (actions != null)
-                Row(mainAxisSize: MainAxisSize.min, children: actions!)
-              else
-                const SizedBox(width: 48), // Balance spacing
-            ],
-          ),
-        ),
+    return AppBar(
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
       ),
+      centerTitle: true,
+      elevation: 0,
+      scrolledUnderElevation: 1,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.95),
+      leading: showBackButton
+          ? IconButton(
+              icon: Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Theme.of(context).colorScheme.primary),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          : leading ??
+              (Navigator.canPop(context)
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_back_ios_new,
+                          color: Theme.of(context).colorScheme.primary),
+                      onPressed: () => Navigator.pop(context),
+                    )
+                  : null),
+      actions: actions,
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(height + 16);
+  Size get preferredSize => Size.fromHeight(height);
 }

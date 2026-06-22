@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'glass_container.dart';
 
 class GlassTextField extends StatelessWidget {
   final String hintText;
@@ -25,34 +24,49 @@ class GlassTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassContainer(
-      height: maxLines != null && maxLines! > 1 ? 120 : 60,
-      borderRadius: 16,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Center(
-        child: TextFormField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          validator: validator,
-          maxLines: maxLines,
-          style: Theme.of(context).textTheme.bodyLarge,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: hintText,
-            hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).textTheme.bodySmall?.color,
-                ),
-            prefixIcon: prefixIcon != null
-                ? Icon(
-                    prefixIcon,
-                    color: Theme.of(context).colorScheme.primary,
-                  )
-                : null,
-            suffixIcon: suffixIcon,
-            contentPadding: EdgeInsets.symmetric(vertical: prefixIcon != null ? 14 : 0),
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      validator: validator,
+      maxLines: maxLines,
+      style: Theme.of(context).textTheme.bodyLarge,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Theme.of(context).textTheme.bodySmall?.color,
+            ),
+        prefixIcon: prefixIcon != null
+            ? Icon(
+                prefixIcon,
+                color: Theme.of(context).colorScheme.primary,
+              )
+            : null,
+        suffixIcon: suffixIcon,
+        filled: true,
+        fillColor: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.surfaceContainerHighest
+            : Theme.of(context).colorScheme.surfaceContainerLowest,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.primary,
+            width: 1.5,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }

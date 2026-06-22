@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'glass_container.dart';
 
 class GlassButton extends StatelessWidget {
   final String text;
@@ -19,37 +18,46 @@ class GlassButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: isLoading ? null : onPressed,
-      child: GlassContainer(
-        height: 56,
-        borderRadius: 16,
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Center(
-          child: isLoading
-              ? const SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (icon != null) ...[
-                      Icon(icon, color: color ?? Theme.of(context).colorScheme.primary),
-                      const SizedBox(width: 8),
-                    ],
-                    Text(
-                      text,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: color ?? Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ],
-                ),
+    final buttonColor = color ?? Theme.of(context).colorScheme.primary;
+
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 0,
         ),
+        child: isLoading
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, color: Colors.white),
+                    const SizedBox(width: 8),
+                  ],
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }

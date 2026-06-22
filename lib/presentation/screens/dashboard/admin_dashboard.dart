@@ -50,7 +50,7 @@ class AdminDashboard extends ConsumerWidget {
         ),
         child: navigationShell,
       ),
-      extendBody: true,
+      extendBody: false,
       bottomNavigationBar: GlassBottomNavigation(
         currentIndex: navigationShell.currentIndex,
         onTap: (index) {
